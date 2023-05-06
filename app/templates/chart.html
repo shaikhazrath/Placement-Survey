@@ -1,0 +1,244 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Chart.js Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+		@import url('https://fonts.googleapis.com/css2?family=Royal&display=swap');
+
+      *{
+        margin: 0;
+        padding: 0;
+    font-family: 'Royal', sans-serif;
+
+
+
+      }
+      h1{
+        color: rgb(0, 0, 0);
+        text-align: center;
+        text-transform: uppercase;
+        width: 100%;
+      
+      }
+      canvas {
+        width: 80%;
+        height: auto;
+        padding: 10px;
+      }
+      
+      /* Style the main container */
+      .main {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      
+      /* Style the chart containers */
+      .main > div {
+        width: 100%;
+        max-width: 800px;
+        margin: 1em;
+      }
+      .header{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-top: 3rem;
+
+
+      }
+      .form {
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 5px;
+        width: 100%;
+
+      }
+      form{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        font-size: large;
+        gap: 1.5rem
+        ;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        font-size: larger;
+      }
+      
+      select {
+        padding: 5px;
+        border-radius: 3px;
+        margin-bottom: 10px;
+        width: 40%;
+        height: auto;
+        padding: 20px;
+        font-size: larger;
+      }
+      
+      button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 40%;
+        height: auto;
+        padding: 20px;
+        font-size: larger;
+      }
+      
+      button:hover {
+        background-color: #0069d9;
+      }
+    </style>
+  
+  </head>
+  <body>
+    <div class="header">
+      <h1>
+        Total Graduate {{total_count}}
+    </h1>
+      <div class="form">
+        <form method="POST"  action="{% url 'chart_view' %}">
+          {% csrf_token %}
+          <label for="year">Selected a Year:{{year}}</label>
+          <select name="Year" id="branch">
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+          </select>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+   
+    <main class="main">
+       
+       
+      <div>
+        <canvas id="myPieChart"></canvas>
+      </div>
+   
+      <div>
+        <canvas id="myBarChart"></canvas>
+      </div>
+      <div>
+        <canvas id="package-chart"></canvas>
+      </div>
+    </main>
+  
+    <script>
+      var ctxPie = document.getElementById('myPieChart').getContext('2d');
+      var ctxBar = document.getElementById('myBarChart').getContext('2d');
+
+      // define the data for the pie chart
+      var pieData = {
+        labels: ['Not Placed', 'Placed Count'],
+        datasets: [{
+          data: [{{ not_placed_count }}, {{ placed_count }}],
+          backgroundColor: [
+            '#F5A623 ',
+            '#00BCD4'
+          ],
+        }]
+      };
+
+      // define the data for the bar chart
+      var barData = {
+        labels: ['ECE', 'CSE', 'MECH', 'CIVIL', 'CHEM', 'EEE'],
+        datasets: [{
+          label: 'Placed Count by Branch',
+          data: [{{ ece_placed_count }}, {{ cse_placed_count }}, {{ mech_placed_count }}, {{ civil_placed_count }}, {{ chem_placed_count }}, {{ eee_placed_count }}],
+          backgroundColor: [
+            '#36A2EB',
+            '#FF6384',
+            '#FFCE56',
+            '#E7E9ED',
+            '#20B2AA',
+            '#DDA0DD',
+            '#B0E0E6'
+          ]
+        }]
+      };
+
+      // create the pie chart
+      var myPieChart = new Chart(ctxPie, {
+        type: 'pie',
+        data: pieData,
+        options: {
+          maintainAspectRatio: false, // disable aspect ratio
+          responsive: true, // enable responsiveness
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+        
+        // create the bar chart
+        var myBarChart = new Chart(ctxBar, {
+            type: 'bar',
+            data: barData,
+            options: {
+                maintainAspectRatio: false, // disable aspect ratio
+    responsive: true, // enable responsiveness
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    
+      var packageData = {{ package_data|safe }};
+      var packageChart = new Chart(document.getElementById('package-chart'), {
+        type: 'pie',
+        data: {
+          labels: packageData.map(data => data.label),
+          datasets: [{
+            data: packageData.map(data => data.value),
+            backgroundColor: [
+              '#FF6384',
+              '#36A2EB',
+              '#FFCE56',
+              '#8E5EA2',
+              '#3cba9f',
+              '#e8c3b9',
+              '#c45850',
+              '#000000',
+              '#800080'
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          title: {
+            display: true,
+            text: 'Package Distribution'
+          },
+          legend: {
+            display: true,
+            position: 'bottom'
+          },
+          responsive: true,
+          maintainAspectRatio: false
+        }
+      });
+    </script>
+    
+  </body>
+</html>

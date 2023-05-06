@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Royal&display=swap');
+
+
+*{
+    padding: 0;
+    margin: 0;
+}
+p {
+    margin: 10px;
+    font-size: 15px;
+  }
+
+h1{
+    color: #000000;
+}
+.main{
+    font-family: 'Royal', sans-serif;
+    font-weight: normal;
+    text-transform: capitalize; 
+    height: 100vh;
+    background: linear-gradient(to right, #0077C9, #5FA6E5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: 200% auto;
+    animation: gradient-animation 4s ease infinite;
+}
+
+.glass{
+    padding: 10px;
+    margin: 10px;
+    height: 95%;
+    width: max-content;
+    background: linear-gradient(to right,rgba(255, 255, 255, 0.5),rgba(255, 255, 255, 0.5));
+    border-radius: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    flex-direction: column;
+
+}
+.heading{
+    flex:1;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+
+}
+
+
+.form{
+    flex: 3;
+    background: linear-gradient(to right,rgba(255, 255, 255, 0.5),rgba(255, 255, 255, 0.5));
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-direction: column;
+    margin: 1rem;
+    padding: 2rem;
+    border-radius: 2%;
+    
+}
+
+input[type="text"],
+select {
+    width: 15rem;
+
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+input[type="checkbox"] {
+    position: relative;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  input[type="checkbox"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 25px;
+    height: 25px;
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  input[type="checkbox"]:checked::before {
+    content: '✓';
+    font-size: 22px;
+    line-height: 25px;
+    color: #000000;
+    text-align: center;
+  }
+
+input[type="submit"] {
+    color: white;
+    padding: 12px 20px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+
+.btn {
+    width: max-content;
+    height: max-content;
+    outline: none;
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 13px;
+    padding: 10px 20px;
+    margin-top: 15px;
+    margin-right: 10px;
+    text-decoration: none;
+    border-radius: 10px;
+    border: 2px solid #dbdbdb;
+
+    cursor: pointer;
+}
+
+
+@media (min-width: 768px) {
+    .heading {
+      width: 50%;
+    }
+    .glass{
+    flex-direction: row;
+
+    }
+    .form{
+        flex:1;
+        height: 70%;
+    width: 70%;
+    }
+    h1{
+        font-size: 5rem;
+    }
+    p{
+        font-size: 1rem;
+    }
+    .btn {
+        font-size: 23px;
+        padding: 20px 35px;
+        margin-top: 25px;
+        margin-right: 20px;
+
+    }
+    input[type="text"],
+select {
+    width: 20rem;
+
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+  }
+	</style>
+</head>
+<body>
+	<main class="main">
+		<div class="glass">
+			<div class="heading">
+				<h1>Engineering Graduate Job Placement Survey</h1>
+				<p>Get insights on engineering job placement with our comprehensive survey. We gather data from graduates , covering job placement rates, salaries . Make informed career decisions and maximize your potential. Complete the survey now!
+			
+				</p>
+				<a class="btn" href="/chart/">click here View Analytics</a>
+			</div>
+		
+			<form method="post" action="{% url 'add_details' %}" class="form">
+				{% csrf_token %}
+				{% if form.errors %}
+				<ul>
+					{% for field in form %}
+					{% for error in field.errors %}
+					<li>{{ field.label }}: {{ error }}</li>
+					{% endfor %}
+					{% endfor %}
+				</ul>
+				{% endif %}
+				<div>
+					<label for="{{ form.year.id_for_label }}"> Year : </label>
+					{{ form.year }}
+				</div>
+				<div>
+					<label for="{{ form.branch.id_for_label }}">Branch : </label>
+					{{ form.branch }}
+				</div>
+				<div>
+					<label for="{{ form.placed.id_for_label }}">Placed : </label>
+					{{ form.placed }}
+				</div>
+			
+				<div>
+					<label for="{{ form.package.id_for_label }}">Package : </label>
+					{{ form.package }}
+				</div>
+				<div>
+					<button class="btn" type="submit">Submit</button>
+					
+				</div>
+			</form>
+		</div>
+	</main>
+	<script>
+		$(document).ready(function () {
+			var placedField = $('#id_placed');
+			var packageField = $('#id_package');
+
+			packageField.prop('disabled', !placedField.is(':checked'));
+			placed_onField.prop('disabled', !placedField.is(':checked'));
+
+			placedField.change(function () {
+				packageField.prop('disabled', !$(this).is(':checked'));
+				placed_onField.prop('disabled', !$(this).is(':checked'));
+			});
+		});
+	</script>
+</body>
+</html>
